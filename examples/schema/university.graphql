@@ -1,0 +1,24 @@
+schema {
+    query: Query
+}
+
+type Query {
+    universities: [University]!
+}
+
+type University {
+    id: ID!
+    name: String
+    rooms: [Room]!
+}
+
+type Room {
+    id: ID!
+    name: String
+    students: [Student]
+}
+
+type Student {
+    id: ID!
+    name: String
+}
