@@ -1,0 +1,15 @@
+type Todo {
+  id: String
+  text: String!
+}
+
+type Query {
+  readTodos: [Todo!]!
+  readTodo(id: String!): Todo!
+}
+
+type Mutation {
+  createTodo(todo: Todo!): Todo!
+  updateTodo(id: String!, todo: Todo!): Todo!
+  deleteTodo(id: String!): Todo!
+}
