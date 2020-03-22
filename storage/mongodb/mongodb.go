@@ -12,7 +12,8 @@ import (
 
 type MongoDB interface {
 	Create(ctx context.Context, collection string, document interface{}) (interface{}, error)
-	Read(ctx context.Context, collection string, id interface{}) (interface{}, error)
+	ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error)
+	ReadAll(ctx context.Context, collection string) ([]interface{}, error)
 	Update(ctx context.Context, collection string, id interface{}, document interface{}) error
 	Delete(ctx context.Context, collection string, id interface{}) error
 }
@@ -47,12 +48,35 @@ func (s *service) Create(ctx context.Context, collection string, document interf
 	return res.InsertedID, err
 }
 
-func (s *service) Read(ctx context.Context, collection string, id interface{}) (interface{}, error) {
+func (s *service) ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error) {
 	var res interface{}
 	err := s.db.Collection(collection).FindOne(ctx, bson.M{"_id": id}).Decode(&res)
 	if err != nil {
 		return nil, err
 	}
+	return res, err
+}
+
+func (s *service) ReadAll(ctx context.Context, collection string) ([]interface{}, error) {
+	var res []interface{}
+	cur, err := s.db.Collection(collection).Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(ctx)
+	for cur.Next(ctx) {
+		var result interface{}
+		err := cur.Decode(&result)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, result)
+	}
+	err = cur.Err()
+	if err != nil {
+		return nil, err
+	}
+
 	return res, err
 }
 
