@@ -51,7 +51,11 @@ func (s *service) Create(ctx context.Context, collection string, document interf
 
 func (s *service) ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error) {
 	var res interface{}
-	err := s.db.Collection(collection).FindOne(ctx, bson.M{"_id": id}).Decode(&res)
+	_id, err := primitive.ObjectIDFromHex(id.(string))
+	if err != nil {
+		return nil, err
+	}
+	err = s.db.Collection(collection).FindOne(ctx, bson.M{"_id": _id}).Decode(&res)
 	if err != nil {
 		return nil, err
 	}
