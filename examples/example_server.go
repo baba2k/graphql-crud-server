@@ -47,7 +47,7 @@ func main() {
 
 	opt := options.Client()
 	opt = opt.SetHosts([]string{"localhost"})
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
 	db, err := mongodb.NewMongoDB(ctx, opt, "graphql")
 	if err != nil {
 		panic("can not connect to database: " + err.Error())
@@ -63,7 +63,7 @@ func main() {
 			name := field.Name
 			log.Println("Found field: ", name)
 			fields[name] = &graphql.Field{
-				Type: graphql.String,
+				Type: scalarTypesMap[field.Type.String()],
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 					return db.ReadAll(ctx, name)
@@ -79,11 +79,6 @@ func main() {
 		log.Fatalf("failed to create new schema, error: %v", err)
 	}
 
-	// TODO: Get objects by reflection
-
-	// TODO: Set standard resolver interface to mongodb
-
-	// TODO: Start graphql server
 	h := handler.New(&handler.Config{
 		Schema:     &s,
 		Pretty:     true,
@@ -95,4 +90,18 @@ func main() {
 	if err != nil {
 		panic("graphql server can not be started: " + err.Error())
 	}
+}
+
+// scalar types String , Int , Float , Boolean , ID
+var scalarTypesMap = map[string]graphql.Type{
+	"String!":  graphql.NewNonNull(graphql.String),
+	"String":   graphql.String,
+	"Int!":     graphql.NewNonNull(graphql.Int),
+	"Int":      graphql.Int,
+	"Float!":   graphql.NewNonNull(graphql.Float),
+	"Float":    graphql.Float,
+	"Boolean!": graphql.NewNonNull(graphql.Boolean),
+	"Boolean":  graphql.Boolean,
+	"ID!":      graphql.NewNonNull(graphql.ID),
+	"ID":       graphql.ID,
 }
