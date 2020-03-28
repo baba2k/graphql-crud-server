@@ -31,7 +31,7 @@ func main() {
 	// parse example graphql schema from file
 	// graphql.ParseFile("examples/schema/university.graphql")
 
-	content, err := ioutil.ReadFile("examples/schema/hello.graphql")
+	content, err := ioutil.ReadFile("examples/schema/todo_simple.graphql")
 	if err != nil {
 		panic(err)
 	}
@@ -40,7 +40,7 @@ func main() {
 	text := string(content)
 
 	schema := gqlparser.MustLoadSchema(&ast.Source{
-		Name:  "hello.graphql",
+		Name:  "todo_simple.graphql",
 		Input: text,
 	})
 	schemaConfig := graphql.SchemaConfig{}
@@ -53,6 +53,7 @@ func main() {
 		panic("can not connect to database: " + err.Error())
 	}
 
+	// query
 	q := (*schema).Query
 	if q != nil {
 		fields := graphql.Fields{}
@@ -61,13 +62,34 @@ func main() {
 				continue
 			}
 			name := field.Name
-			log.Println("Found field: ", name)
+			log.Println("Found query field: " + name)
+
+			// set field type
 			fields[name] = &graphql.Field{
 				Type: scalarTypesMap[field.Type.String()],
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+			}
+
+			// set field arguments
+			fields[name].Args = make(graphql.FieldConfigArgument)
+			for _, arg := range field.Arguments {
+				fields[name].Args[arg.Name] = &graphql.ArgumentConfig{
+					Type:         scalarTypesMap[arg.Type.String()],
+					DefaultValue: arg.DefaultValue,
+					Description:  arg.Description,
+				}
+			}
+
+			// set field resolver
+			if strings.HasSuffix(name, "s") {
+				fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
 					ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-					return db.ReadAll(ctx, name)
-				},
+					return db.ReadAll(ctx, strings.ToLower(strings.TrimRight(strings.TrimLeft(name, "read"), "s")))
+				}
+			} else {
+				fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
+					ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+					return db.ReadOne(ctx, strings.ToLower(strings.TrimLeft(name, "read")), p.Args["id"])
+				}
 			}
 		}
 		rootQuery := graphql.ObjectConfig{Name: q.Name, Fields: fields}
@@ -96,6 +118,7 @@ func main() {
 var scalarTypesMap = map[string]graphql.Type{
 	"String!":  graphql.NewNonNull(graphql.String),
 	"String":   graphql.String,
+	"[String]": graphql.NewList(graphql.String),
 	"Int!":     graphql.NewNonNull(graphql.Int),
 	"Int":      graphql.Int,
 	"Float!":   graphql.NewNonNull(graphql.Float),
