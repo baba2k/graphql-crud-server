@@ -1,10 +1,10 @@
 type Query {
-    readTodos: [String!]!
-    readTodo(id: ID!): String!
+    readTodos: [String]
+    readTodo(id: ID!): String
 }
 
 type Mutation {
-    createTodo(todo: String!): String!
-    updateTodo(id: ID!, todo: String!): String!
-    deleteTodo(id: ID!): String!
+    createTodo(todo: String!): ID
+    updateTodo(id: ID!, todo: String): String
+    deleteTodo(id: ID!): String
 }
