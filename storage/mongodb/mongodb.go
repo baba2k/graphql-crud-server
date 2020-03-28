@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -45,7 +46,7 @@ func (s *service) Create(ctx context.Context, collection string, document interf
 	if err != nil {
 		return nil, err
 	}
-	return res.InsertedID, err
+	return res.InsertedID.(primitive.ObjectID).Hex(), err
 }
 
 func (s *service) ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error) {
