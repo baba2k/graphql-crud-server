@@ -50,7 +50,7 @@ func (s *service) Create(ctx context.Context, collection string, document interf
 }
 
 func (s *service) ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error) {
-	var res interface{}
+	var res primitive.D
 	_id, err := primitive.ObjectIDFromHex(id.(string))
 	if err != nil {
 		return nil, err
