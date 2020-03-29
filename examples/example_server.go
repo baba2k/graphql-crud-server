@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
+	_type "github.com/baba2k/graphql-rungen/examples/type"
 	"github.com/baba2k/graphql-rungen/storage/mongodb"
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
@@ -20,10 +20,10 @@ func main() {
 	/*
 			parser.ParseString(
 						`schema {
-		    				query: Query
+		    				query: CreateQuery
 						}
 
-						type Query {
+						type CreateQuery {
 							name: String!
 						}`)
 	*/
@@ -53,100 +53,9 @@ func main() {
 		panic("can not connect to database: " + err.Error())
 	}
 
-	// query
-	q := (*schema).Query
-	if q != nil {
-		fields := graphql.Fields{}
-		for _, field := range q.Fields {
-			if strings.HasPrefix(field.Name, "_") {
-				continue
-			}
-			name := field.Name
-			log.Println("Found query field: " + name)
-
-			// set field type
-			fields[name] = &graphql.Field{
-				Type: scalarTypesMap[field.Type.String()],
-			}
-
-			// set field arguments
-			fields[name].Args = make(graphql.FieldConfigArgument)
-			for _, arg := range field.Arguments {
-				fields[name].Args[arg.Name] = &graphql.ArgumentConfig{
-					Type:         scalarTypesMap[arg.Type.String()],
-					DefaultValue: arg.DefaultValue,
-					Description:  arg.Description,
-				}
-			}
-
-			// set field resolver
-			if strings.HasSuffix(name, "s") {
-				fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
-					ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-					return db.ReadAll(ctx, strings.ToLower(strings.TrimRight(strings.TrimLeft(name, "read"), "s")))
-				}
-			} else {
-				fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
-					ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-					return db.ReadOne(ctx, strings.ToLower(strings.TrimLeft(name, "read")), p.Args["id"])
-				}
-			}
-		}
-		rootQuery := graphql.ObjectConfig{Name: q.Name, Fields: fields}
-		schemaConfig.Query = graphql.NewObject(rootQuery)
-	}
-
-	// mutation
-	m := (*schema).Mutation
-	if m != nil {
-		fields := graphql.Fields{}
-		for _, field := range m.Fields {
-			if strings.HasPrefix(field.Name, "_") {
-				continue
-			}
-			name := field.Name
-			log.Println("Found mutation field: " + name)
-
-			// set field type
-			fields[name] = &graphql.Field{
-				Type: scalarTypesMap[field.Type.String()],
-			}
-
-			// set field arguments
-			fields[name].Args = make(graphql.FieldConfigArgument)
-			for _, arg := range field.Arguments {
-				fields[name].Args[arg.Name] = &graphql.ArgumentConfig{
-					Type:         scalarTypesMap[arg.Type.String()],
-					DefaultValue: arg.DefaultValue,
-					Description:  arg.Description,
-				}
-			}
-
-			// set field resolver
-			if strings.HasPrefix(name, "create") {
-				fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
-					ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-					return db.Create(ctx, strings.ToLower(strings.TrimLeft(name, "create")), p.Args)
-				}
-			} else if strings.HasPrefix(name, "update") {
-				fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
-					ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-					err := db.Update(ctx, strings.ToLower(strings.TrimLeft(name, "update")), p.Args, p.Args["id"])
-					return nil, err
-				}
-			} else if strings.HasPrefix(name, "delete") {
-				fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
-					ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-					err := db.Delete(ctx, strings.ToLower(strings.TrimLeft(name, "delete")), p.Args["id"])
-					return nil, err
-				}
-			} else {
-				log.Println("unknown field " + name)
-			}
-		}
-		rootMutation := graphql.ObjectConfig{Name: m.Name, Fields: fields}
-		schemaConfig.Mutation = graphql.NewObject(rootMutation)
-	}
+	_type.CreateObjects(schema)
+	schemaConfig.Query = _type.CreateQuery(schema, db)
+	schemaConfig.Mutation = _type.CreateMutation(schema, db)
 
 	s, err := graphql.NewSchema(schemaConfig)
 	if err != nil {
@@ -164,19 +73,4 @@ func main() {
 	if err != nil {
 		panic("graphql server can not be started: " + err.Error())
 	}
-}
-
-// scalar types String , Int , Float , Boolean , ID
-var scalarTypesMap = map[string]graphql.Type{
-	"String!":  graphql.NewNonNull(graphql.String),
-	"String":   graphql.String,
-	"[String]": graphql.NewList(graphql.String),
-	"Int!":     graphql.NewNonNull(graphql.Int),
-	"Int":      graphql.Int,
-	"Float!":   graphql.NewNonNull(graphql.Float),
-	"Float":    graphql.Float,
-	"Boolean!": graphql.NewNonNull(graphql.Boolean),
-	"Boolean":  graphql.Boolean,
-	"ID!":      graphql.NewNonNull(graphql.ID),
-	"ID":       graphql.ID,
 }
