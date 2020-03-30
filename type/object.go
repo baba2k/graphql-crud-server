@@ -15,7 +15,7 @@ func CreateObjects(schema *ast.Schema) map[string]*graphql.Object {
 			log.Println("unknown error on while creating objects: len(possibleType) != 1")
 			continue
 		}
-		if pt[0].BuiltIn || pt[0].Name == "Query" || pt[0].Name == "Mutation" {
+		if pt[0].BuiltIn || pt[0].Name == "Query" || pt[0].Name == "Mutation" || pt[0].IsInputType() {
 			continue
 		}
 
