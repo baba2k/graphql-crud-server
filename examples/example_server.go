@@ -11,7 +11,7 @@ import (
 
 func main() {
 	// load schema from file
-	err, schema := graphql.LoadSchemaFromFile("examples/schema/todo_simple.graphql")
+	err, schema := graphql.LoadSchemaFromFile("examples/schema/todo_simple_object.graphql")
 
 	// create mongodb interface
 	opt := options.Client()
