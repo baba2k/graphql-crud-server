@@ -2,30 +2,26 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
 	"time"
 
-	"github.com/baba2k/graphql-rungen/server"
-	"github.com/baba2k/graphql-rungen/storage/mongodb"
+	"github.com/baba2k/graphql-rungen"
+	"github.com/baba2k/graphql-rungen/storage"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
 	// load schema from file
-	schema, err := ioutil.ReadFile("examples/schema/todo_simple.graphql")
-	if err != nil {
-		panic(err)
-	}
+	err, schema := graphql.LoadSchemaFromFile("examples/schema/todo_simple.graphql")
 
-	// set database to mongodb
+	// create mongodb interface
 	opt := options.Client()
 	opt = opt.SetHosts([]string{"localhost"})
 	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
-	db, err := mongodb.NewMongoDB(ctx, opt, "graphql")
+	db, err := storage.NewMongoDB(ctx, opt, "graphql")
 	if err != nil {
 		panic("can not connect to database: " + err.Error())
 	}
 
 	// start server
-	server.StartServer(":8080", string(schema), db)
+	graphql.StartServer(":8080", schema, db)
 }

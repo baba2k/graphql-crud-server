@@ -1,13 +1,28 @@
 package graphql
 
 import (
-	"github.com/baba2k/graphql-rungen/parser"
+	"io/ioutil"
+	"log"
+	"reflect"
+
+	"github.com/baba2k/graphql-rungen/server"
+	"github.com/baba2k/graphql-rungen/storage"
 )
 
-func ParseFile(fileName string) {
-	parser.ParseFile(fileName)
+func LoadSchemaFromFile(filename string) (error, string) {
+	schemaBytes, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	schema := string(schemaBytes)
+	return err, schema
 }
 
-func ParseString(rawString string) {
-	parser.ParseString(rawString)
+func StartServer(addr, schema string, db interface{}) {
+	switch dbType := db.(type) {
+	case storage.MongoDB:
+		server.StartServer(addr, schema, dbType)
+	default:
+		log.Fatal("unknown database type: " + reflect.TypeOf(db).Name())
+	}
 }

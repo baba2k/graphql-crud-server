@@ -6,6 +6,7 @@ type Todo {
 input TodoInput {
     text: String!
 }
+
 type Mutation {
     createTodo(todo: TodoInput!): Todo
     updateTodo(id: ID!, todo: TodoInput): Todo

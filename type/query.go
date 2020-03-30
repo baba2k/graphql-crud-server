@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/baba2k/graphql-rungen/storage/mongodb"
+	"github.com/baba2k/graphql-rungen/storage"
 	"github.com/graphql-go/graphql"
 	"github.com/vektah/gqlparser/ast"
 )
 
-func CreateQuery(schema *ast.Schema, db mongodb.MongoDB) *graphql.Object {
+func CreateQuery(schema *ast.Schema, db storage.MongoDB) *graphql.Object {
 	q := (*schema).Query
 	if q == nil {
 		return nil
@@ -23,7 +23,7 @@ func CreateQuery(schema *ast.Schema, db mongodb.MongoDB) *graphql.Object {
 			continue
 		}
 		name := field.Name
-		log.Println("Found query field: " + name)
+		log.Println("found query: " + name)
 
 		// set field type
 		fields[name] = &graphql.Field{

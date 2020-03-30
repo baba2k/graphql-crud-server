@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/baba2k/graphql-rungen/storage/mongodb"
+	"github.com/baba2k/graphql-rungen/storage"
 	"github.com/graphql-go/graphql"
 	"github.com/vektah/gqlparser/ast"
 )
 
-func CreateMutation(schema *ast.Schema, db mongodb.MongoDB) *graphql.Object {
+func CreateMutation(schema *ast.Schema, db storage.MongoDB) *graphql.Object {
 	m := (*schema).Mutation
 	if m == nil {
 		return nil
@@ -23,7 +23,7 @@ func CreateMutation(schema *ast.Schema, db mongodb.MongoDB) *graphql.Object {
 			continue
 		}
 		name := field.Name
-		log.Println("Found mutation field: " + name)
+		log.Println("found mutation: " + name)
 
 		// set field type
 		fields[name] = &graphql.Field{

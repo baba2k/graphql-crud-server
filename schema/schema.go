@@ -3,14 +3,14 @@ package schema
 import (
 	"log"
 
-	_type "github.com/baba2k/graphql-rungen/examples/type"
-	"github.com/baba2k/graphql-rungen/storage/mongodb"
+	"github.com/baba2k/graphql-rungen/storage"
+	_type "github.com/baba2k/graphql-rungen/type"
 	"github.com/graphql-go/graphql"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"
 )
 
-func CreateSchema(schema string, db mongodb.MongoDB) (graphql.Schema, error) {
+func CreateSchema(schema string, db storage.MongoDB) (graphql.Schema, error) {
 	schem, gqlErr := gqlparser.LoadSchema(&ast.Source{Input: schema})
 	if gqlErr != nil {
 		log.Fatalf("can not load schema: " + gqlErr.Error())

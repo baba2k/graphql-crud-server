@@ -5,11 +5,11 @@ import (
 	"net/http"
 
 	s "github.com/baba2k/graphql-rungen/schema"
-	"github.com/baba2k/graphql-rungen/storage/mongodb"
+	"github.com/baba2k/graphql-rungen/storage"
 	"github.com/graphql-go/handler"
 )
 
-func StartServer(addr, schema string, db mongodb.MongoDB) {
+func StartServer(addr, schema string, db storage.MongoDB) {
 	parsedSchema, err := s.CreateSchema(schema, db)
 
 	h := handler.New(&handler.Config{
