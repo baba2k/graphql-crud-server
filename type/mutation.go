@@ -11,7 +11,7 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-func CreateMutation(schema *ast.Schema, db storage.MongoDB) *graphql.Object {
+func CreateMutation(schema *ast.Schema, input map[string]graphql.Input, output map[string]graphql.Output, db storage.MongoDB) *graphql.Object {
 	m := (*schema).Mutation
 	if m == nil {
 		return nil
@@ -27,14 +27,14 @@ func CreateMutation(schema *ast.Schema, db storage.MongoDB) *graphql.Object {
 
 		// set field type
 		fields[name] = &graphql.Field{
-			Type: ScalarTypes[field.Type.String()],
+			Type: output[field.Type.String()],
 		}
 
 		// set field arguments
 		fields[name].Args = make(graphql.FieldConfigArgument)
 		for _, arg := range field.Arguments {
 			fields[name].Args[arg.Name] = &graphql.ArgumentConfig{
-				Type:         ScalarTypes[arg.Type.String()],
+				Type:         input[arg.Type.String()],
 				DefaultValue: arg.DefaultValue,
 				Description:  arg.Description,
 			}
