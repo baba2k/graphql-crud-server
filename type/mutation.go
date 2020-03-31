@@ -44,19 +44,30 @@ func CreateMutation(schema *ast.Schema, input map[string]graphql.Input, output m
 		if strings.HasPrefix(name, "create") {
 			fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
 				ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-				return db.Create(ctx, strings.ToLower(strings.TrimLeft(name, "create")), p.Args)
+				collection := strings.ToLower(strings.TrimLeft(name, "create"))
+				res, err := db.Create(ctx, collection, p.Args)
+				if err != nil {
+					return nil, err
+				}
+				return res, err
 			}
 		} else if strings.HasPrefix(name, "update") {
 			fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
 				ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-				err := db.Update(ctx, strings.ToLower(strings.TrimLeft(name, "update")), p.Args, p.Args["id"])
-				return nil, err
+				res, err := db.Update(ctx, strings.ToLower(strings.TrimLeft(name, "update")), p.Args, p.Args["id"])
+				if err != nil {
+					return nil, err
+				}
+				return res, err
 			}
 		} else if strings.HasPrefix(name, "delete") {
 			fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
 				ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-				err := db.Delete(ctx, strings.ToLower(strings.TrimLeft(name, "delete")), p.Args["id"])
-				return nil, err
+				res, err := db.Delete(ctx, strings.ToLower(strings.TrimLeft(name, "delete")), p.Args["id"])
+				if err != nil {
+					return nil, err
+				}
+				return res, err
 			}
 		} else {
 			log.Println("unknown field " + name)
