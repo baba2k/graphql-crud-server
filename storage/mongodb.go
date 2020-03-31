@@ -15,8 +15,8 @@ type MongoDB interface {
 	Create(ctx context.Context, collection string, document interface{}) (interface{}, error)
 	ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error)
 	ReadAll(ctx context.Context, collection string) ([]interface{}, error)
-	Update(ctx context.Context, collection string, id interface{}, document interface{}) error
-	Delete(ctx context.Context, collection string, id interface{}) error
+	Update(ctx context.Context, collection string, id interface{}, document interface{}) (interface{}, error)
+	Delete(ctx context.Context, collection string, id interface{}) (interface{}, error)
 }
 
 type service struct {
@@ -46,7 +46,7 @@ func (s *service) Create(ctx context.Context, collection string, document interf
 	if err != nil {
 		return nil, err
 	}
-	return res.InsertedID.(primitive.ObjectID).Hex(), err
+	return s.ReadOne(ctx, collection, res.InsertedID.(primitive.ObjectID).Hex())
 }
 
 func (s *service) ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error) {
@@ -59,7 +59,14 @@ func (s *service) ReadOne(ctx context.Context, collection string, id interface{}
 	if err != nil {
 		return nil, err
 	}
-	return res, err
+	object := res.Map()
+	object["id"] = object["_id"].(primitive.ObjectID).Hex()
+	delete(object, "_id")
+	for _, m := range object[collection].(primitive.D) {
+		object[m.Key] = m.Value
+	}
+	delete(object, collection)
+	return object, err
 }
 
 func (s *service) ReadAll(ctx context.Context, collection string) ([]interface{}, error) {
@@ -85,12 +92,18 @@ func (s *service) ReadAll(ctx context.Context, collection string) ([]interface{}
 	return res, err
 }
 
-func (s *service) Update(ctx context.Context, collection string, id interface{}, document interface{}) error {
+func (s *service) Update(ctx context.Context, collection string, id interface{}, document interface{}) (interface{}, error) {
 	_, err := s.db.Collection(collection).UpdateOne(ctx, bson.M{"_id": id}, document)
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return s.ReadOne(ctx, collection, id)
 }
 
-func (s *service) Delete(ctx context.Context, collection string, id interface{}) error {
+func (s *service) Delete(ctx context.Context, collection string, id interface{}) (interface{}, error) {
 	_, err := s.db.Collection(collection).DeleteOne(ctx, bson.M{"_id": id})
-	return err
+	if err != nil {
+		return nil, err
+	}
+	return s.ReadOne(ctx, collection, id)
 }
