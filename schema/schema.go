@@ -3,8 +3,8 @@ package schema
 import (
 	"log"
 
-	"github.com/baba2k/graphql-rungen/storage"
-	_type "github.com/baba2k/graphql-rungen/type"
+	"github.com/baba2k/graphql-crud-server/storage"
+	_type "github.com/baba2k/graphql-crud-server/type"
 	"github.com/graphql-go/graphql"
 	"github.com/vektah/gqlparser"
 	"github.com/vektah/gqlparser/ast"

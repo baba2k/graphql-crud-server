@@ -5,8 +5,8 @@ import (
 	"log"
 	"reflect"
 
-	"github.com/baba2k/graphql-rungen/server"
-	"github.com/baba2k/graphql-rungen/storage"
+	"github.com/baba2k/graphql-crud-server/server"
+	"github.com/baba2k/graphql-crud-server/storage"
 )
 
 func LoadSchemaFromFile(filename string) (error, string) {

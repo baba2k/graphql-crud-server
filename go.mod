@@ -1,4 +1,4 @@
-module github.com/baba2k/graphql-rungen
+module github.com/baba2k/graphql-crud-server
 
 go 1.13
 

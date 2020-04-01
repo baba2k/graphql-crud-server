@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	s "github.com/baba2k/graphql-rungen/schema"
-	"github.com/baba2k/graphql-rungen/storage"
+	s "github.com/baba2k/graphql-crud-server/schema"
+	"github.com/baba2k/graphql-crud-server/storage"
 	"github.com/graphql-go/handler"
 )
 

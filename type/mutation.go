@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/baba2k/graphql-rungen/storage"
+	"github.com/baba2k/graphql-crud-server/storage"
 	"github.com/graphql-go/graphql"
 	"github.com/vektah/gqlparser/ast"
 )

@@ -12,7 +12,7 @@ or other overhead. Just load a graphql schema and start the server. See section
 ## Getting Started
 
 To install the library, run:  
-`go get github.com/baba2k/graphql-rungen`
+`go get github.com/baba2k/graphql-crud-server`
 
 ## Examples
 See "examples" dir for more examples
