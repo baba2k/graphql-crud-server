@@ -54,7 +54,7 @@ func CreateMutation(schema *ast.Schema, input map[string]graphql.Input, output m
 		} else if strings.HasPrefix(name, "update") {
 			fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
 				ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-				res, err := db.Update(ctx, strings.ToLower(strings.TrimLeft(name, "update")), p.Args, p.Args["id"])
+				res, err := db.Update(ctx, strings.ToLower(strings.TrimLeft(name, "update")), p.Args["id"], p.Args)
 				if err != nil {
 					return nil, err
 				}
