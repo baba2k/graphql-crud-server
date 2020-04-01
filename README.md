@@ -9,13 +9,28 @@ for building generic CRUD graphql servers fast and simple. No need for any model
 or other overhead. Just load a graphql schema and start the server. See section   
 "Getting Started" for more details.
 
-## Getting Started
+## Installation
 
-To install the library, run:  
-`go get github.com/baba2k/graphql-crud-server`
+```bash
+# Go Modules
+require github.com/baba2k/graphql-crud-server v0.1.3
+```
+
+## Usage
+
+The following samples will assist you to become as comfortable as possible 
+with graphql-crud-server library.
+
+```go
+// Import graphql-crud-server into your code and refer it as `graphql`.
+import "github.com/baba2k/graphql-crud-server"
+```
 
 ## Examples
-See "examples" dir for more examples
+
+[Simple "Todo" example](./example/example_todo_server.go)
+
+See "example" dir for more examples
 
 ## License
 
