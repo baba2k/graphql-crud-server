@@ -4,10 +4,9 @@ GraphQL generic CRUD server for golang
 
 ## What is graphql-crud-server?
 
-graphql-crud-server is a GraphQL library written in golang  
-for building generic CRUD graphql servers fast and simple. No need for any models  
-or other overhead. Just load a graphql schema and start the server. See section   
-"Getting Started" for more details.
+graphql-crud-server is a GraphQL library written in golang for building generic CRUD graphql 
+servers fast and simple. No need for any models or other overhead. Just load a graphql schema 
+and start the server. See section "Examples" for more details.
 
 ## Installation
 
