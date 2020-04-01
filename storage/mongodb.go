@@ -42,7 +42,11 @@ func NewMongoDB(ctx context.Context, opt *options.ClientOptions, databaseName st
 }
 
 func (s *service) Create(ctx context.Context, collection string, document interface{}) (interface{}, error) {
-	res, err := s.db.Collection(collection).InsertOne(ctx, document)
+	doc := map[string]interface{}{}
+	for k, v := range document.(map[string]interface{})[collection].(map[string]interface{}) {
+		doc[k] = v
+	}
+	res, err := s.db.Collection(collection).InsertOne(ctx, doc)
 	if err != nil {
 		return nil, err
 	}
@@ -62,10 +66,6 @@ func (s *service) ReadOne(ctx context.Context, collection string, id interface{}
 	object := res.Map()
 	object["id"] = object["_id"].(primitive.ObjectID).Hex()
 	delete(object, "_id")
-	for _, m := range object[collection].(primitive.D) {
-		object[m.Key] = m.Value
-	}
-	delete(object, collection)
 	return object, err
 }
 
@@ -77,12 +77,15 @@ func (s *service) ReadAll(ctx context.Context, collection string) ([]interface{}
 	}
 	defer cur.Close(ctx)
 	for cur.Next(ctx) {
-		var result interface{}
+		var result primitive.D
 		err := cur.Decode(&result)
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, result)
+		object := result.Map()
+		object["id"] = object["_id"].(primitive.ObjectID).Hex()
+		delete(object, "_id")
+		res = append(res, object)
 	}
 	err = cur.Err()
 	if err != nil {
@@ -93,7 +96,15 @@ func (s *service) ReadAll(ctx context.Context, collection string) ([]interface{}
 }
 
 func (s *service) Update(ctx context.Context, collection string, id interface{}, document interface{}) (interface{}, error) {
-	_, err := s.db.Collection(collection).UpdateOne(ctx, bson.M{"_id": id}, document)
+	doc := map[string]interface{}{}
+	for k, v := range document.(map[string]interface{})[collection].(map[string]interface{}) {
+		doc[k] = v
+	}
+	_id, err := primitive.ObjectIDFromHex(id.(string))
+	if err != nil {
+		return nil, err
+	}
+	_, err = s.db.Collection(collection).UpdateOne(ctx, bson.M{"_id": _id}, bson.M{"$set": doc})
 	if err != nil {
 		return nil, err
 	}
@@ -101,9 +112,19 @@ func (s *service) Update(ctx context.Context, collection string, id interface{},
 }
 
 func (s *service) Delete(ctx context.Context, collection string, id interface{}) (interface{}, error) {
-	_, err := s.db.Collection(collection).DeleteOne(ctx, bson.M{"_id": id})
+	_id, err := primitive.ObjectIDFromHex(id.(string))
 	if err != nil {
 		return nil, err
 	}
-	return s.ReadOne(ctx, collection, id)
+
+	res, err := s.ReadOne(ctx, collection, id)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.db.Collection(collection).DeleteOne(ctx, bson.M{"_id": _id})
+	if err != nil {
+		return nil, err
+	}
+	return res, err
 }
