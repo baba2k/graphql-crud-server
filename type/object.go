@@ -29,7 +29,6 @@ func CreateObjects(schema *ast.Schema) map[string]*graphql.Object {
 			for _, a := range f.Arguments {
 				args[a.Name] = &graphql.ArgumentConfig{
 					Type: ScalarTypes[a.Type.String()],
-					// DefaultValue: a.DefaultValue,
 					Description: a.Description,
 				}
 			}
@@ -44,9 +43,7 @@ func CreateObjects(schema *ast.Schema) map[string]*graphql.Object {
 		// object config
 		objectConfig := graphql.ObjectConfig{
 			Name: pt[0].Name,
-			// Interfaces:  pt[0].Interfaces,
 			Fields: fields,
-			// IsTypeOf:    nil,
 			Description: pt[0].Description,
 		}
 
