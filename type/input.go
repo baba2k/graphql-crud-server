@@ -24,28 +24,16 @@ func CreateInputObjects(schema *ast.Schema) map[string]*graphql.InputObject {
 		// fields
 		fields := graphql.InputObjectConfigFieldMap{}
 		for _, f := range pt[0].Fields {
-			// args
-			args := graphql.FieldConfigArgument{}
-			for _, a := range f.Arguments {
-				args[a.Name] = &graphql.ArgumentConfig{
-					Type: ScalarTypes[a.Type.String()],
-					// DefaultValue: a.DefaultValue,
-					Description: a.Description,
-				}
-			}
 			fields[f.Name] = &graphql.InputObjectFieldConfig{
-				Type: ScalarTypes[f.Type.String()],
-				// DefaultValue: f.DefaultValue,
+				Type:        ScalarTypes[f.Type.String()],
 				Description: f.Description,
 			}
 		}
 
 		// object config
 		objectConfig := graphql.InputObjectConfig{
-			Name: pt[0].Name,
-			// Interfaces:  pt[0].Interfaces,
-			Fields: fields,
-			// IsTypeOf:    nil,
+			Name:        pt[0].Name,
+			Fields:      fields,
 			Description: pt[0].Description,
 		}
 

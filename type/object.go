@@ -24,26 +24,17 @@ func CreateObjects(schema *ast.Schema) map[string]*graphql.Object {
 		// fields
 		fields := graphql.Fields{}
 		for _, f := range pt[0].Fields {
-			// args
-			args := graphql.FieldConfigArgument{}
-			for _, a := range f.Arguments {
-				args[a.Name] = &graphql.ArgumentConfig{
-					Type: ScalarTypes[a.Type.String()],
-					Description: a.Description,
-				}
-			}
 			fields[f.Name] = &graphql.Field{
 				Name:        f.Name,
 				Type:        ScalarTypes[f.Type.String()],
-				Args:        args,
 				Description: f.Description,
 			}
 		}
 
 		// object config
 		objectConfig := graphql.ObjectConfig{
-			Name: pt[0].Name,
-			Fields: fields,
+			Name:        pt[0].Name,
+			Fields:      fields,
 			Description: pt[0].Description,
 		}
 
