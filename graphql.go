@@ -9,13 +9,13 @@ import (
 	"github.com/baba2k/graphql-crud-server/storage"
 )
 
-func LoadSchemaFromFile(filename string) (error, string) {
+func LoadSchemaFromFile(filename string) (string, error) {
 	schemaBytes, err := ioutil.ReadFile(filename)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	schema := string(schemaBytes)
-	return err, schema
+	return schema, err
 }
 
 func StartServer(addr, schema string, db interface{}) {
