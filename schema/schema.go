@@ -20,31 +20,17 @@ func CreateSchema(schema string, db storage.MongoDB) (graphql.Schema, error) {
 
 	// input
 	input := map[string]graphql.Input{}
-	for k, v := range _type.CreateInputObjects(schem) {
-		input[k] = v
-		input[k+"!"] = graphql.NewNonNull(v)
-		input["["+k+"]"] = graphql.NewList(v)
-		input["["+k+"!]"] = graphql.NewList(graphql.NewNonNull(v))
-		input["["+k+"]!"] = graphql.NewNonNull(graphql.NewList(v))
-		input["["+k+"!]!"] = graphql.NewNonNull(graphql.NewList(graphql.NewNonNull(v)))
-	}
 	for k, v := range _type.ScalarTypes {
 		input[k] = v
 	}
+	input = _type.CreateInputObjects(schem, input)
 
 	// output
 	output := map[string]graphql.Output{}
-	for k, v := range _type.CreateObjects(schem) {
-		output[k] = v
-		output[k+"!"] = graphql.NewNonNull(v)
-		output["["+k+"]"] = graphql.NewList(v)
-		output["["+k+"!]"] = graphql.NewList(graphql.NewNonNull(v))
-		output["["+k+"]!"] = graphql.NewNonNull(graphql.NewList(v))
-		output["["+k+"!]!"] = graphql.NewNonNull(graphql.NewList(graphql.NewNonNull(v)))
-	}
 	for k, v := range _type.ScalarTypes {
 		output[k] = v
 	}
+	output = _type.CreateObjects(schem, output)
 
 	schemaConfig.Query = _type.CreateQuery(schem, input, output, db)
 	schemaConfig.Mutation = _type.CreateMutation(schem, input, output, db)
