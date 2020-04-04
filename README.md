@@ -47,7 +47,7 @@ See section "Examples" for more examples.
 ### Mutation
 
 * Name of the collection / table  will be parsed from the field definition in lowercase
-* All fields must have one of these prefixes: *"create", "update" and "delete"* 
+* All fields must have one of these prefixes: *"create", "update" or "delete"* 
 * Prefixes will be cut off
 * All fields return the modified object
 
