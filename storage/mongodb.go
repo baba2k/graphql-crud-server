@@ -66,7 +66,7 @@ func (s *service) ReadOne(ctx context.Context, collection string, id interface{}
 	object := res.Map()
 	object["id"] = object["_id"].(primitive.ObjectID).Hex()
 	delete(object, "_id")
-	return object, err
+	return convertMongoDocument(object), err
 }
 
 func (s *service) ReadAll(ctx context.Context, collection string) ([]interface{}, error) {
@@ -127,4 +127,21 @@ func (s *service) Delete(ctx context.Context, collection string, id interface{})
 		return nil, err
 	}
 	return res, err
+}
+
+func convertMongoDocument(object interface{}) interface{} {
+	switch val := object.(type) {
+	case primitive.M:
+		for k, v := range val {
+			val[k] = convertMongoDocument(v)
+		}
+	case primitive.A:
+		for i, elem := range val {
+			val[i] = convertMongoDocument(elem)
+		}
+	case primitive.D:
+		return convertMongoDocument(val.Map())
+	}
+
+	return object
 }
