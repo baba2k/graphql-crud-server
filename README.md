@@ -41,6 +41,7 @@ type Query {
 * *readTodos* returns all todos
 * *readTodo* returns a todo by id
 * `todo(id: ID!): Todo` and `todos: [Todo]` would be also fine
+
 See section "Examples" for more examples.
 
 ### Mutation
@@ -58,17 +59,46 @@ type Mutation {
     deleteTodo(id: ID!): Todo
 }
 ```
+* The collection / table is "todo"
+
 See section "Examples" for more examples.
 
 ## Supported database interfaces
 
+### MapDB (in-memory)
+
+Create a MapDB interface and pass it to the graphql-crud-server as argument. See section "Examples" for more details.
+
+#### Example
+
+```go
+// create mapdb database interface
+db, err := storage.NewMapDB()
+if err != nil {
+    log.Fatal("can not connect to database: " + err.Error())
+}
+```
 ### MongoDB
 
 Create a MongoDB interface with the official mongo driver (https://github.com/mongodb/mongo-go-driver) and pass it to the graphql-crud-server as argument. See section "Examples" for more details.
 
+#### Example
+
+```go
+// create mongodb database interface
+opt := options.Client()
+opt = opt.SetHosts([]string{"localhost"})
+ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
+db, err := storage.NewMongoDB(ctx, opt, "graphql")
+if err != nil {
+    log.Fatal("can not connect to database: " + err.Error())
+}
+```
+
 ## Examples
 
-[Simple "Todo" example](./example/example_todo_server.go)
+* [MapDB "Todo" example](./example/mapdb/example_mapdb_server.go)
+* [MongoDB "Todo" example](./example/mongodb/example_mongodb_server.go)
 
 See "example" dir for more examples
 

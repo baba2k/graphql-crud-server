@@ -14,7 +14,7 @@ func main() {
 		log.Fatal("can load schema: " + err.Error())
 	}
 
-	// create map database interface
+	// create mapdb database interface
 	db, err := storage.NewMapDB()
 	if err != nil {
 		log.Fatal("can not connect to database: " + err.Error())
