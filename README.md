@@ -25,6 +25,7 @@ import "github.com/baba2k/graphql-crud-server"
 ## Supported Database Interfaces
 
 ### MongoDB
+
 Create a MongoDB interface with the official mongo driver (https://github.com/mongodb/mongo-go-driver) and pass it to the graphql-crud-server as argument. See section "Examples" for more details.
 
 ## Examples
