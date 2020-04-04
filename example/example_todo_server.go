@@ -12,7 +12,10 @@ import (
 
 func main() {
 	// load schema from file
-	err, schema := graphql.LoadSchemaFromFile("examples/schema/todo.graphql")
+	schema, err := graphql.LoadSchemaFromFile("example/schema/todo.graphql")
+	if err != nil {
+		log.Fatal("can load schema: " + err.Error())
+	}
 
 	// create mongodb database interface
 	opt := options.Client()
