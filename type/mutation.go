@@ -70,7 +70,7 @@ func CreateMutation(schema *ast.Schema, input map[string]graphql.Input, output m
 				return res, err
 			}
 		} else {
-			log.Println("unknown field " + name)
+			log.Fatalf("unknown field found " + name)
 		}
 	}
 
