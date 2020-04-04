@@ -21,8 +21,32 @@ The following samples will assist you to become as comfortable as possible with 
 // Import graphql-crud-server into your code and refer it as `graphql`.
 import "github.com/baba2k/graphql-crud-server"
 ```
+## Schema definition
 
-## Supported Database Interfaces
+### Query
+
+* Name of the collection / table  will be parsed from the field definition in lowercase
+* *"read"* prefix and *"s"* suffix will be cut off
+* List as return type defines a field which returns a list
+* All other fields return an object
+
+#### Example
+```graphql
+type Query {
+    readTodos: [Todo]
+    readTodo(id: ID!): Todo
+}
+```
+* The collection / table is *"todo"*
+* *readTodos* returns all todos
+* *readTodo* returns a todo by id
+* `todo(id: ID!): Todo` and `todos: [Todo]` would be also fine
+
+### Mutation
+
+TODO
+
+## Supported database interfaces
 
 ### MongoDB
 
