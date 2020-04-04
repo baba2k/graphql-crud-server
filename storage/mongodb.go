@@ -19,7 +19,7 @@ type MongoDB interface {
 	Delete(ctx context.Context, collection string, id interface{}) (interface{}, error)
 }
 
-type service struct {
+type mongodbService struct {
 	db *mongo.Database
 }
 
@@ -36,12 +36,12 @@ func NewMongoDB(ctx context.Context, opt *options.ClientOptions, databaseName st
 		return nil, errors.New("can not ping: " + err.Error())
 	}
 
-	return &service{
+	return &mongodbService{
 		db: client.Database(databaseName),
 	}, err
 }
 
-func (s *service) Create(ctx context.Context, collection string, document interface{}) (interface{}, error) {
+func (s *mongodbService) Create(ctx context.Context, collection string, document interface{}) (interface{}, error) {
 	doc := map[string]interface{}{}
 	for k, v := range document.(map[string]interface{})[collection].(map[string]interface{}) {
 		doc[k] = v
@@ -53,7 +53,7 @@ func (s *service) Create(ctx context.Context, collection string, document interf
 	return s.ReadOne(ctx, collection, res.InsertedID.(primitive.ObjectID).Hex())
 }
 
-func (s *service) ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error) {
+func (s *mongodbService) ReadOne(ctx context.Context, collection string, id interface{}) (interface{}, error) {
 	var res primitive.D
 	_id, err := primitive.ObjectIDFromHex(id.(string))
 	if err != nil {
@@ -69,7 +69,7 @@ func (s *service) ReadOne(ctx context.Context, collection string, id interface{}
 	return convertMongoDocument(object), err
 }
 
-func (s *service) ReadAll(ctx context.Context, collection string) ([]interface{}, error) {
+func (s *mongodbService) ReadAll(ctx context.Context, collection string) ([]interface{}, error) {
 	var res []interface{}
 	cur, err := s.db.Collection(collection).Find(ctx, bson.M{})
 	if err != nil {
@@ -95,7 +95,7 @@ func (s *service) ReadAll(ctx context.Context, collection string) ([]interface{}
 	return res, err
 }
 
-func (s *service) Update(ctx context.Context, collection string, id interface{}, document interface{}) (interface{}, error) {
+func (s *mongodbService) Update(ctx context.Context, collection string, id interface{}, document interface{}) (interface{}, error) {
 	doc := map[string]interface{}{}
 	for k, v := range document.(map[string]interface{})[collection].(map[string]interface{}) {
 		doc[k] = v
@@ -111,7 +111,7 @@ func (s *service) Update(ctx context.Context, collection string, id interface{},
 	return s.ReadOne(ctx, collection, id)
 }
 
-func (s *service) Delete(ctx context.Context, collection string, id interface{}) (interface{}, error) {
+func (s *mongodbService) Delete(ctx context.Context, collection string, id interface{}) (interface{}, error) {
 	_id, err := primitive.ObjectIDFromHex(id.(string))
 	if err != nil {
 		return nil, err
