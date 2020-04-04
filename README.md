@@ -4,12 +4,12 @@ GraphQL CRUD server library for golang
 
 ## What is graphql-crud-server?
 
-graphql-crud-server is a GraphQL library written in golang for building generic CRUD (Create, Read, Update, Delete) graphql servers fast and simple. No need for implementing resolvers, models or other overhead. Just load a graphql schema and start the server. See section "Examples" for more details.
+graphql-crud-server is a GraphQL library written in golang for building generic CRUD (Create, Read, Update, Delete) graphql servers fast and simple. No need for implementing resolvers, models or other overhead. Just load a graphql schema and start the server. See sections "Schema definition" and "Examples" for more details.
 
 ## Installation
 
 ```bash
-# Go Modules
+# go modules
 require github.com/baba2k/graphql-crud-server v0.1.5
 ```
 
@@ -18,7 +18,7 @@ require github.com/baba2k/graphql-crud-server v0.1.5
 The following samples will assist you to become as comfortable as possible with graphql-crud-server library.
 
 ```go
-// Import graphql-crud-server into your code and refer it as `graphql`.
+// import graphql-crud-server into your code and refer it as `graphql`
 import "github.com/baba2k/graphql-crud-server"
 ```
 ## Schema definition
@@ -41,10 +41,24 @@ type Query {
 * *readTodos* returns all todos
 * *readTodo* returns a todo by id
 * `todo(id: ID!): Todo` and `todos: [Todo]` would be also fine
+See section "Examples" for more examples.
 
 ### Mutation
 
-TODO
+* Name of the collection / table  will be parsed from the field definition in lowercase
+* All fields must have one of these prefixes: *"create", "update" and "delete"* 
+* Prefixes will be cut off
+* All fields return the modified object
+
+#### Example
+```graphql
+type Mutation {
+    createTodo(todo: TodoInput!): Todo
+    updateTodo(id: ID!, todo: TodoInput!): Todo
+    deleteTodo(id: ID!): Todo
+}
+```
+See section "Examples" for more examples.
 
 ## Supported database interfaces
 
