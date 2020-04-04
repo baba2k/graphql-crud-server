@@ -1,6 +1,6 @@
 # graphql-crud-server
 
-GraphQL generic CRUD server for golang
+GraphQL CRUD server library for golang
 
 ## What is graphql-crud-server?
 

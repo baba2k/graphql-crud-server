@@ -41,7 +41,7 @@ func CreateQuery(schema *ast.Schema, input map[string]graphql.Input, output map[
 		}
 
 		// set field resolver
-		if strings.HasSuffix(name, "s") {
+		if strings.HasPrefix(field.Type.String(), "[") {
 			fields[name].Resolve = func(p graphql.ResolveParams) (interface{}, error) {
 				ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 				return db.ReadAll(ctx, strings.ToLower(strings.TrimRight(strings.TrimLeft(name, "read"), "s")))
