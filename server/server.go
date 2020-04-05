@@ -9,7 +9,7 @@ import (
 	"github.com/graphql-go/handler"
 )
 
-func StartServer(addr, schema string, db storage.MongoDB) {
+func StartServer(addr, schema string, db storage.Database) {
 	parsedSchema, err := s.CreateSchema(schema, db)
 
 	h := handler.New(&handler.Config{

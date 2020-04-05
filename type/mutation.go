@@ -11,7 +11,7 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-func CreateMutation(schema *ast.Schema, input map[string]graphql.Input, output map[string]graphql.Output, db storage.MongoDB) *graphql.Object {
+func CreateMutation(schema *ast.Schema, input map[string]graphql.Input, output map[string]graphql.Output, db storage.Database) *graphql.Object {
 	m := (*schema).Mutation
 	if m == nil {
 		return nil

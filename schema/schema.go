@@ -10,7 +10,7 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-func CreateSchema(schema string, db storage.MongoDB) (graphql.Schema, error) {
+func CreateSchema(schema string, db storage.Database) (graphql.Schema, error) {
 	schem, gqlErr := gqlparser.LoadSchema(&ast.Source{Input: schema})
 	if gqlErr != nil {
 		log.Fatalf("can not load schema: " + gqlErr.Error())

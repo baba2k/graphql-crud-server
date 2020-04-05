@@ -11,7 +11,7 @@ import (
 	"github.com/vektah/gqlparser/ast"
 )
 
-func CreateQuery(schema *ast.Schema, input map[string]graphql.Input, output map[string]graphql.Output, db storage.MongoDB) *graphql.Object {
+func CreateQuery(schema *ast.Schema, input map[string]graphql.Input, output map[string]graphql.Output, db storage.Database) *graphql.Object {
 	q := (*schema).Query
 	if q == nil {
 		return nil
