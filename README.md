@@ -10,7 +10,7 @@ graphql-crud-server is a GraphQL library written in golang for building generic 
 
 ```bash
 # go modules
-require github.com/baba2k/graphql-crud-server v0.1.6
+require github.com/baba2k/graphql-crud-server v0.1.7
 ```
 
 ## Usage
