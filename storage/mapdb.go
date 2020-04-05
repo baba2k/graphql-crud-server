@@ -41,9 +41,6 @@ func (s *mapService) ReadOne(ctx context.Context, collection string, id interfac
 	if !ok {
 		return nil, errors.New("no valid id found")
 	}
-	if s.db[collection] == nil {
-		return nil, errors.New("collection not found")
-	}
 	for _, d := range s.db[collection] {
 		doc, ok := d.(map[string]interface{})
 		if !ok {
@@ -59,7 +56,7 @@ func (s *mapService) ReadOne(ctx context.Context, collection string, id interfac
 
 func (s *mapService) ReadAll(ctx context.Context, collection string) ([]interface{}, error) {
 	if s.db[collection] == nil {
-		return nil, errors.New("no document found")
+		return []interface{}{}, nil
 	}
 	ctx.Done()
 	return s.db[collection], nil
@@ -69,9 +66,6 @@ func (s *mapService) Update(ctx context.Context, collection string, id interface
 	_id, ok := id.(string)
 	if !ok {
 		return nil, errors.New("no valid id found")
-	}
-	if s.db[collection] == nil {
-		return nil, errors.New("collection not found")
 	}
 	for i, d := range s.db[collection] {
 		doc, ok := d.(map[string]interface{})
@@ -97,9 +91,6 @@ func (s *mapService) Delete(ctx context.Context, collection string, id interface
 	_id, ok := id.(string)
 	if !ok {
 		return nil, errors.New("no valid id found")
-	}
-	if s.db[collection] == nil {
-		return nil, errors.New("collection not found")
 	}
 	for i, d := range s.db[collection] {
 		doc, ok := d.(map[string]interface{})
