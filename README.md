@@ -95,6 +95,15 @@ if err != nil {
 }
 ```
 
+## Docker
+
+### Simple example with MapDB
+
+```bash
+docker build -t graphql-crud-server . \
+    && docker run -p 8080:8080 -d -e SCHEMA_FILE=example/mapdb/schema/todo.graphql -e DATABASE_TYPE=MapDB --name graphql-crud-server graphql-crud-server
+```
+
 ## Examples
 
 * [MapDB "Todo" example](./example/mapdb/example_mapdb_server.go)
