@@ -21,14 +21,14 @@ func main() {
 
 	var db storage.Database
 
-	switch os.Getenv("DATABASE_TYPE") {
-	case "MapDB":
+	switch strings.ToLower(os.Getenv("DATABASE_TYPE")) {
+	case "mapdb":
 		// create mapdb database interface
 		db, err = storage.NewMapDB()
 		if err != nil {
 			log.Fatal("can not connect to database: " + err.Error())
 		}
-	case "MongoDB":
+	case "mongodb":
 		// create mongodb database interface
 		opt := options.Client()
 		mongodbHosts := os.Getenv("MONGODB_HOSTS")
