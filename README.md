@@ -104,6 +104,14 @@ docker build -t graphql-crud-server . \
     && docker run -p 8080:8080 -d -e SCHEMA_FILE=example/mapdb/schema/todo.graphql -e DATABASE_TYPE=MapDB --name graphql-crud-server graphql-crud-server
 ```
 
+### More complex example with MongoDB
+
+1. Have a look at [docker-compose.yml](./docker-compose.yml) for configuration.
+2. Start server and database with:
+   ```bash
+   docker-compose up -d
+   ```
+
 ## Examples
 
 * [MapDB "Todo" example](./example/mapdb/example_mapdb_server.go)
