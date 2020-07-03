@@ -77,7 +77,7 @@ func (s *mapService) Update(ctx context.Context, collection string, id interface
 			if !ok {
 				return nil, errors.New("document has invalid type: " + reflect.TypeOf(document).String())
 			}
-			for k,v := range doc[collection].(map[string]interface{}) {
+			for k, v := range doc[collection].(map[string]interface{}) {
 				doc[k] = v
 			}
 			s.db[collection][i] = doc
