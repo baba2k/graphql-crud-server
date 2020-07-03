@@ -8,8 +8,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: graphql
       MONGO_INITDB_ROOT_PASSWORD: super-secret-password
-#   ports:
-#     - "27017-27019:27017-27019"
+  #   ports:
+  #     - "27017-27019:27017-27019"
   graphql-crud-server:
     container_name: graphql-crud-server
     restart: unless-stopped
